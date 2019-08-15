@@ -2781,7 +2781,7 @@
           "type": "object",
           "properties": {
             "vehicle": {
-              "$ref": "vehicles.json#/definitions/VehicleTinyResponse"
+              "$ref": "#/definitions/vehicleTinyResponse"
             }
           }
         },
