@@ -1,0 +1,702 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "# Introduction\n\nSamsara provides API endpoints for interacting with Samsara Cloud, so that you can build powerful applications and custom solutions with sensor data. Samsara has endpoints available to track and analyze sensors, vehicles, and entire fleets.\n\nThe Samsara Cloud API is a [RESTful API](https://en.wikipedia.org/wiki/Representational_state_transfer) accessed by an [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) client such as wget or curl, or HTTP libraries of most modern programming languages including python, ruby, java. We use built-in HTTP features, like HTTP authentication and HTTP verbs, which are understood by off-the-shelf HTTP clients. We allow you to interact securely with our API from a client-side web application (though you should never expose your secret API key). [JSON](http://www.json.org/) is returned by all API responses, including errors. If you’re familiar with what you can build with a REST API, the following API reference guide will be your go-to resource.\n\nAPI access to the Samsara cloud is available to all Samsara administrators. To start developing with Samsara APIs you will need to [obtain your API keys](#section/Authentication) to authenticate your API requests.\n\nIf you have any questions you can reach out to us on [support@samsara.com](mailto:support@samsara.com)\n\n# Endpoints\n\nAll our APIs can be accessed through HTTP requests to URLs like:\n\n```curl\nhttps://api.samsara.com/\u003cversion\u003e/\u003cendpoint\u003e\n```\n\nAll our APIs are [versioned](#section/Versioning). If we intend to make breaking changes to an API which either changes the response format or request parameter, we will increment the version.\n\n# Authentication\n\nTo authenticate your API request you will need to include your secret token. You can manage your API tokens in the [Dashboard](https://cloud.samsara.com). They are visible under `Settings-\u003eOrganization-\u003eAPI Tokens`.\n\nYour API tokens carry many privileges, so be sure to keep them secure. Do not share your secret API tokens in publicly accessible areas such as GitHub, client-side code, and so on.\n\nAuthentication to the API is performed via [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication). Provide your API token as the basic access_token value in the URL. You do not need to provide a password.\n\n```curl\nhttps://api.samsara.com/\u003cversion\u003e/\u003cendpoint\u003e?access_token={access_token}\n```\n\nAll API requests must be made over [HTTPS](https://en.wikipedia.org/wiki/HTTPS). Calls made over plain HTTP or without authentication will fail.\n\n# Request Methods\n\nOur API endpoints use [HTTP request methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods) to specify the desired operation to be performed. The documentation below specified request method supported by each endpoint and the resulting action.\n\n## GET\n\nGET requests are typically used for fetching data (like data for a particular driver).\n\n## POST\n\nPOST requests are typically used for creating or updating a record (like adding new tags to the system). With that being said, a few of our POST requests can be used for fetching data (like current location data of your fleet).\n\n## PUT\n\nPUT requests are typically used for updating an existing record (like updating all devices associated with a particular tag).\n\n## PATCH\n\nPATCH requests are typically used for modifying an existing record (like modifying a few devices associated with a particular tag).\n\n## DELETE\n\nDELETE requests are used for deleting a record (like deleting a tag from the system).\n\n# Response Codes\n\nAll API requests will respond with appropriate [HTTP status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). Your API client should handle each response class differently.\n\n## 2XX\n\nThese are successful responses and indicate that the API request returned the expected response.\n\n## 4XX\n\nThese indicate that there was a problem with the request like a missing parameter or invalid values. Check the response for specific [error details](#section/Error-Responses). Requests that respond with a 4XX status code, should be modified before retrying.\n\n## 5XX\n\nThese indicate server errors when the server is unreachable or is misconfigured. In this case, you should retry the API request after some delay.\n\n# Error Responses\n\nIn case of a 4XX status code, the body of the response will contain information to briefly explain the error reported. To help debugging the error, you can refer to the following table for understanding the error message.\n\n| Status Code | Message | Description |\n|-------------|----------------|-------------------------------------------------------------------|\n| 401 | Invalid token | The API token is invalid and could not be authenticated. Please refer to the [authentication section](#section/Authentication). |\n| 404 | Page not found | The API endpoint being accessed is invalid. |\n| 400 | Bad request | Default response for an invalid request. Please check the request to make sure it follows the format specified in the documentation. |\n\n# Versioning\n\nAll our APIs are versioned. Our current API version is v1 and we are continuously working on improving it further and providing additional endpoints. If we intend to make breaking changes in a backwards-incompatible way, we release a new dated version to your API. Thus, you can use our current API version worry free. For a detailed guide on how to upgrade your API token, please check out this [Knowledge Base article](https://kb.samsara.com/hc/en-us/articles/360026132972-Upgrading-API-Tokens).\n\n# FAQs\n\nCheck out our [responses to FAQs here](https://kb.samsara.com/hc/en-us/sections/360000538054-APIs). Don’t see an answer to your question? Reach out to us on [support@samsara.com](mailto:support@samsara.com).",
+    "title": "Samsara API",
+    "version": "1.0.0"
+  },
+  "host": "api.samsara.com",
+  "paths": {
+    "/fleet/drivers/safety-scores": {
+      "get": {
+        "description": "Fetch safety scores for all drivers in the organization in a given time period.",
+        "tags": [
+          "Safety"
+        ],
+        "summary": "Fetch all safety scores by driver",
+        "operationId": "getOrgDriverSafetyScores",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "string",
+            "description": "Beginning of the time range, specified in RFC 3339 time.",
+            "name": "startTime",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "format": "string",
+            "description": "End of the time range, specified in RFC 3339 time.",
+            "name": "endTime",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Safety scores for all vehicles in the organization",
+            "schema": {
+              "$ref": "#/definitions/OrgSafetyScoresResponse"
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "schema": {
+              "$ref": "#/definitions/standardErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DriverCreate": {
+      "description": "Driver that should be created.",
+      "type": "object",
+      "required": [
+        "name",
+        "username",
+        "password"
+      ],
+      "properties": {
+        "carrierSettings": {
+          "description": "Carrier for a given driver. If the driver's carrier differs from the general organization's carrier settings, the override value is used. Updating this value only updates the override setting for this driver.",
+          "type": "object",
+          "properties": {
+            "carrierName": {
+              "description": "Carrier for a given driver.",
+              "type": "string",
+              "maxLength": 255,
+              "example": "Acme Inc."
+            },
+            "dotNumber": {
+              "description": "Carrier US DOT Number. If this differs from the general organization's settings, the override value is used. Updating this value only updates the override setting for this driver.",
+              "type": "integer",
+              "format": "int64",
+              "example": 98231
+            },
+            "mainOfficeAddress": {
+              "description": "Main office address for a given driver. If this differs from the general organization's settings, the override value is used. ",
+              "type": "string",
+              "maxLength": 255,
+              "example": "1234 Pear St., Scranton, PA 62814"
+            }
+          }
+        },
+        "currentVehicleId": {
+          "description": "ID of vehicle that driver is currently assigned to.",
+          "type": "string",
+          "example": "123"
+        },
+        "eldAdverseWeatherExemptionEnabled": {
+          "description": "Flag indicating this driver may use Adverse Weather exemptions in ELD logs.",
+          "type": "boolean"
+        },
+        "eldBigDayExemptionEnabled": {
+          "description": "Flag indicating this driver may use Big Day exemption in ELD logs.",
+          "type": "boolean"
+        },
+        "eldDayStartHour": {
+          "description": "`0` indicating midnight-to-midnight ELD driving hours, `12` to indicate noon-to-noon driving hours.",
+          "type": "integer"
+        },
+        "eldExempt": {
+          "description": "Flag indicating this driver is exempt from the Electronic Logging Mandate.",
+          "type": "boolean"
+        },
+        "eldExemptReason": {
+          "description": "Reason that this driver is exempt from the Electronic Logging Mandate (see eldExempt).",
+          "type": "string",
+          "example": "Bad driver"
+        },
+        "eldPcEnabled": {
+          "description": "Flag indicating this driver may select the Personal Conveyance duty status in ELD logs.",
+          "type": "boolean",
+          "default": false
+        },
+        "eldYmEnabled": {
+          "description": "Flag indicating this driver may select the Yard Move duty status in ELD logs.",
+          "type": "boolean",
+          "default": false
+        },
+        "externalIds": {
+          "description": "User-defined dictionary of external IDs (string key-value pairs).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "example": {
+            "maintenanceId": "250020",
+            "payrollId": "123"
+          }
+        },
+        "licenseNumber": {
+          "description": "Driver's state issued license number.",
+          "type": "string",
+          "example": "E1234567"
+        },
+        "licenseState": {
+          "description": "Abbreviation of state that issued driver's license.",
+          "type": "string",
+          "example": "CA"
+        },
+        "locale": {
+          "description": "Locale override (uncommon).",
+          "type": "string",
+          "enum": [
+            "United States",
+            "Austria",
+            "Belgium",
+            "Canada",
+            "United Kingdom",
+            "France",
+            "Germany",
+            "Ireland",
+            "Luxembourg",
+            "Mexico",
+            "Netherlands",
+            "Spain",
+            "Switzerland"
+          ]
+        },
+        "name": {
+          "description": "Driver's name.",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1,
+          "example": "Susan Jones"
+        },
+        "notes": {
+          "description": "Notes about the driver.",
+          "type": "string",
+          "maxLength": 4096,
+          "example": "Also goes by the nickname Furious Fred."
+        },
+        "password": {
+          "description": "Password that the driver can use to login to the Samsara driver app.",
+          "type": "string",
+          "example": "aSecurePassword1234"
+        },
+        "phone": {
+          "description": "Driver's phone number. Please include only digits, ex. 4157771234",
+          "type": "string",
+          "maxLength": 255,
+          "example": "5558234327"
+        },
+        "staticVehicleAssignmentId": {
+          "description": "ID of vehicle assigned to the driver for static vehicle assignments. (uncommon).",
+          "type": "string",
+          "example": "456"
+        },
+        "tagIds": {
+          "description": "IDs of tags the driver is associated with.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "147"
+          }
+        },
+        "timezone": {
+          "description": "Home terminal timezone, in order to indicate what time zone should be used to calculate the ELD logs.",
+          "type": "string",
+          "example": "New York - EST/EDT"
+        },
+        "username": {
+          "description": "Driver's login username into the driver app. The username may not contain spaces or the '@' symbol.",
+          "type": "string",
+          "maxLength": 189,
+          "minLength": 1,
+          "example": "Susan Jones"
+        },
+        "vehicleGroupTagId": {
+          "description": "Tag ID which determines which vehicles a driver will see when selecting vehicles.",
+          "type": "string",
+          "example": "East Coast"
+        }
+      }
+    },
+    "EquipmentTime": {
+      "description": "UTC timestamp of the time the data point was generated by the equipment, in RFC3339 format.",
+      "type": "string",
+      "example": "2019-05-03T04:30:31.492Z"
+    },
+    "Message": {
+      "type": "object",
+      "required": [
+        "driverId",
+        "text"
+      ],
+      "properties": {
+        "driverId": {
+          "description": "ID of the driver for whom the message is sent to or sent by.",
+          "type": "integer",
+          "format": "int64",
+          "example": 555
+        },
+        "text": {
+          "description": "The text sent in the message.",
+          "type": "string",
+          "maxLength": 65533,
+          "minLength": 1,
+          "example": "This is a message."
+        }
+      }
+    },
+    "Messages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Message"
+      }
+    },
+    "OrgHarshEventsKondoResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "behaviorLabels": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "labelSource": {
+                      "description": "Label source of the harsh event",
+                      "type": "string",
+                      "format": "string",
+                      "example": "SYSTEM"
+                    },
+                    "labelType": {
+                      "description": "Label type of the harsh event",
+                      "type": "string",
+                      "format": "string",
+                      "example": "Braking"
+                    }
+                  }
+                }
+              },
+              "downloadForwardVideoUrl": {
+                "description": "Download forward video url",
+                "type": "string",
+                "format": "string",
+                "example": "samsara-dashcam-videos::3318/222/1499411220000/huKA7IhpBV-camera-video-segment-1244214895.mp4"
+              },
+              "downloadInwardVideoUrl": {
+                "description": "Download inward video url",
+                "type": "string",
+                "format": "string",
+                "example": "samsara-dashcam-videos::3318/222/1499411220000/huKA7IhpBV-camera-video-segment-1244214895.mp4"
+              },
+              "downloadTrackedInwardVideoUrl": {
+                "description": "Download tracked inward video url",
+                "type": "string",
+                "format": "string",
+                "example": "samsara-dashcam-videos::3318/222/1499411220000/huKA7IhpBV-camera-video-segment-1244214895.mp4"
+              },
+              "incidentReportUrl": {
+                "description": "Incident report url",
+                "type": "string",
+                "format": "string",
+                "example": "https://cloud.samsara.com/groups/4185/fleet/reports/safety/vehicle/222/incident/1499411220000"
+              },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "latitude": {
+                    "description": "Longitude at which the harsh event happened",
+                    "type": "number",
+                    "format": "float",
+                    "example": 37.762554666
+                  },
+                  "longitude": {
+                    "description": "Longitude at which the harsh event happened",
+                    "type": "number",
+                    "format": "float",
+                    "example": -122.409358166
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "OrgSafetyScoresResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "crashCount": {
+                "description": "Crash count",
+                "type": "integer",
+                "format": "int64",
+                "example": 1
+              },
+              "driverId": {
+                "description": "Driver Id",
+                "type": "integer",
+                "format": "int64",
+                "example": 319596
+              },
+              "harshAccelCount": {
+                "description": "Harsh accel count",
+                "type": "integer",
+                "format": "int64",
+                "example": 3
+              },
+              "harshBrakingCount": {
+                "description": "Harsh braking count",
+                "type": "integer",
+                "format": "int64",
+                "example": 5
+              },
+              "harshEventIdentifiers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "eventTime": {
+                      "description": "Event time, specified in RFC 3339",
+                      "type": "string",
+                      "format": "string",
+                      "example": "2019-04-17T16:42:55Z"
+                    },
+                    "vehicleId": {
+                      "description": "Vehicle Id",
+                      "type": "integer",
+                      "format": "int64",
+                      "example": 212014918214656
+                    }
+                  }
+                }
+              },
+              "harshTurningCount": {
+                "description": "Harsh turning count",
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "safetyScore": {
+                "description": "Vehicle/Driver Safety Score",
+                "type": "integer",
+                "format": "int64",
+                "example": 92
+              },
+              "safetyScoreRank": {
+                "description": "Vehicle/Driver Safety Rank",
+                "type": "integer",
+                "format": "int64",
+                "example": 7
+              },
+              "timeOverSpeedLimitMs": {
+                "description": "Overspeed limit time, specified in milliseconds UNIX time.",
+                "type": "integer",
+                "format": "int64",
+                "example": 123
+              },
+              "totalDistanceDrivenMeters": {
+                "description": "Total distance driven meters",
+                "type": "integer",
+                "format": "int64",
+                "example": 2509
+              },
+              "totalHarshEventCount": {
+                "description": "Total harsh event count",
+                "type": "integer",
+                "format": "int64",
+                "example": 20
+              },
+              "totalTimeDrivenMs": {
+                "description": "Total driver time, specified in milliseconds UNIX time.",
+                "type": "integer",
+                "format": "int64",
+                "example": 12343
+              },
+              "vehicleId": {
+                "description": "Vehicle Id",
+                "type": "integer",
+                "format": "int64",
+                "example": 212014918214656
+              }
+            }
+          }
+        }
+      }
+    },
+    "annotation": {
+      "description": "Annotation for the driving segment.",
+      "type": "string",
+      "format": "string",
+      "example": "Yard move."
+    },
+    "contactTinyResponse": {
+      "description": "A minified contact object",
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "description": "First name of the contact.",
+          "type": "string",
+          "example": "Jane"
+        },
+        "id": {
+          "description": "ID of the contact.",
+          "type": "string",
+          "example": "123"
+        },
+        "lastName": {
+          "description": "Last name of the contact.",
+          "type": "string",
+          "example": "Jones"
+        }
+      }
+    },
+    "driverId": {
+      "description": "ID of Driver to assign this segment to. The driver assignment is a tentative assignment until the ID is 'ACCEPTED'.",
+      "type": "string",
+      "example": "1234"
+    },
+    "driverTinyResponse": {
+      "description": "A minified driver object.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID of the driver.",
+          "type": "string",
+          "example": "88668"
+        },
+        "name": {
+          "description": "Name of the driver.",
+          "type": "string",
+          "example": "Susan Bob"
+        }
+      }
+    },
+    "endTimeBodyParam": {
+      "description": "End time of the driving segment, specified in RFC 3339 format.",
+      "type": "string",
+      "format": "date-time",
+      "example": "2019-04-17T16:42:55Z"
+    },
+    "equipmentTinyResponse": {
+      "description": "A minified equipment object.",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "description": "ID of the equipment.",
+          "type": "string",
+          "example": "123456789"
+        },
+        "name": {
+          "description": "Name of the equipment.",
+          "type": "string",
+          "example": "40' crane #5"
+        }
+      }
+    },
+    "location": {
+      "description": "Location object",
+      "type": "object",
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "properties": {
+        "addresses": {
+          "description": "Array of address mini-objects, in which the given lat/long coordinates falls within the address's geofence borders. If the location is not within any geofence, then this value will not appear",
+          "type": "array",
+          "items": {
+            "description": "Address book entry, if one exists",
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "Address book identifier",
+                "type": "string",
+                "example": "123"
+              },
+              "name": {
+                "description": "Name of this address book entry",
+                "type": "string",
+                "example": "Main Distribution Warehouse"
+              }
+            }
+          }
+        },
+        "latitude": {
+          "description": "GPS latitude represented in degrees",
+          "type": "number",
+          "format": "double",
+          "example": 122.142
+        },
+        "longitude": {
+          "description": "GPS longitude represented in degrees",
+          "type": "number",
+          "format": "double",
+          "example": -93.343
+        }
+      }
+    },
+    "paginationResponse": {
+      "description": "Pagination parameters.",
+      "type": "object",
+      "required": [
+        "endCursor",
+        "hasNextPage"
+      ],
+      "properties": {
+        "endCursor": {
+          "description": "Cursor identifier representing the last element in the response. This value should be used in conjunction with a subsequent request's 'after' query parameter.",
+          "type": "string",
+          "format": "string",
+          "example": "MjkY"
+        },
+        "hasNextPage": {
+          "description": "True if there are more pages of results immediately available after this endCursor. Otherwise, wait nextPageAfter seconds before fetching the next page with endCursor.",
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "standardErrorResponse": {
+      "description": "Error response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "The message of the error.",
+          "type": "string"
+        },
+        "requestId": {
+          "description": "The ID of the request.",
+          "type": "string"
+        }
+      }
+    },
+    "startTimeBodyParam": {
+      "description": "Start time of the driving segment, specified in RFC 3339 format.",
+      "type": "string",
+      "format": "date-time",
+      "example": "2019-04-17T15:42:55Z"
+    },
+    "tagTinyResponse": {
+      "description": "A minified tag object",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID of the tag.",
+          "type": "string",
+          "example": "123"
+        },
+        "name": {
+          "description": "Name of the tag.",
+          "type": "string",
+          "example": "East Coast"
+        }
+      }
+    },
+    "time": {
+      "description": "UTC timestamp in RFC 3339 milliseconds format.",
+      "type": "string",
+      "example": "2019-05-03T04:30:31.492Z"
+    },
+    "userRoleTinyResponse": {
+      "description": "A minified user role object.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The unique ID for the role.",
+          "type": "string",
+          "example": "8a9371af-82d1-4158-bf91-4ecc8d3a114c"
+        },
+        "name": {
+          "description": "The name of the role.",
+          "type": "string",
+          "example": "Full Admin"
+        }
+      }
+    },
+    "vehicleTinyResponse": {
+      "description": "A minified vehicle object.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID of the vehicle.",
+          "type": "string",
+          "example": "123456789"
+        },
+        "name": {
+          "description": "Name of the vehicle.",
+          "type": "string",
+          "example": "Midwest Truck #4"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "createMessagesParam": {
+      "description": "Text to send to a list of driverIds.",
+      "name": "createMessages",
+      "in": "body",
+      "required": true,
+      "schema": {
+        "type": "object",
+        "required": [
+          "driverIds",
+          "text"
+        ],
+        "properties": {
+          "driverIds": {
+            "description": "IDs of the drivers for whom the messages are sent to.",
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "int64",
+              "example": 555
+            },
+            "example": [
+              111,
+              222,
+              333
+            ]
+          },
+          "text": {
+            "description": "The text sent in the message.",
+            "type": "string",
+            "maxLength": 65533,
+            "minLength": 1,
+            "example": "This is a message."
+          }
+        }
+      }
+    },
+    "endTimeQueryParam": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End of the filter time range, specified in RFC 3339 format. (Example: 2019-06-13T19:08:25Z) Filters based on the server timestamp, i.e. createAtTime.",
+      "name": "endTime",
+      "in": "query"
+    },
+    "startTimeQueryParam": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Beginning of the filter time range, specified in RFC 3339 format. (Example: 2019-06-13T18:08:25Z) Filters based on the server timestamp, i.e. createAtTime.",
+      "name": "startTime",
+      "in": "query"
+    }
+  }
+}
